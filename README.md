@@ -56,6 +56,7 @@ The packages list. Each array entry has to be an object with at least these two 
 
 ### Usage Examples
 
+The following configuration generates two layers, with two different subsets of the same packages.
 
 ```js
 grunt.initConfig({
@@ -83,17 +84,17 @@ grunt.initConfig({
             dest: 'tmp/mainAppLayer.js'
         }]
     },
-    helper: {
+    secondary: {
         files: [{
-            src:  ['src/Helper.js','src/aPackage/*.js', 'src/someOtherPackage/utils.js'],
-            dest: 'tmp/helperLayer.js'
+            src:  ['src/somethingElse.js','src/aPackage/*.js', 'src/someOtherPackage/utils.js'],
+            dest: 'tmp/secondaryLayer.js'
         }]
     }
   }
 });
 ```
 
-Please note that this task does not minimize the resulting file. You may want to run something like uglify after it.
+Please note that this task does not minify the resulting layers. You may want to run something like uglify after it.
 
 
 ## Release History
