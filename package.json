@@ -1,7 +1,7 @@
 {
   "name": "grunt-amd-concat",
   "description": "Build AMD layers the easy way",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/mdolidon/grunt-amd-concat",
   "author": {
     "name": "Mathias Dolidon",
