@@ -99,3 +99,4 @@ Please note that this task does not minify the resulting layers. You may want to
 
 ## Release History
 _0.1.0 : first release, no automated tests yet_
+_0.1.1 : stronger package name solver_
