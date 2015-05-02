@@ -10,6 +10,7 @@
 
 var uuid = require('node-uuid');
 var path = require('path');
+var jsesc = require('jsesc');
 
 function makeLayerHeader() {
     return "require({cache:{";
@@ -21,11 +22,16 @@ function makeLayerFooter() {
 }
 
 
+// PROCESS ONE FILE
 // Expects packages sorted by decreasing location path length
 function processForAmdCache(sortedPackages, src, filePath) {
 
+    function isJs(aPath) {
+        return aPath.lastIndexOf(".js") === aPath.length-3;
+    }
+
     function removeJsExtension(aPath) {
-        return aPath.lastIndexOf(".js")===aPath.length-3 ? aPath.slice(0,aPath.length-3) : aPath;
+        return  isJs(aPath) ? aPath.slice(0,aPath.length-3) : aPath;
     }
 
     function toPackagePrefix(aPath) {
@@ -40,9 +46,28 @@ function processForAmdCache(sortedPackages, src, filePath) {
         throw new Error('Could not resolve a package name for file : ' + filePath); // I know... filePath is in the outer scope
     }                                                                               // Let's act responsibly, this is very small
 
-    return '"' + toPackagePrefix(removeJsExtension(filePath)) +
-        '":function () {' + src + '}';
+    function wrapJsContent(src) {
+        return 'function () {' + src + '}';
+    }
+    
+    function wrapTextContent(src) {
+        return jsesc(src, {quotes:'single', wrap:true});
+    }
+
+    function wrapContent(src, aPath) {
+        return isJs(aPath) ? wrapJsContent(src) : wrapTextContent(src);
+    }
+
+    return '"' + (isJs(filePath) ? '':'url:') +
+        toPackagePrefix(removeJsExtension(filePath)) + 
+        '":' + wrapContent(src, filePath);
 }
+
+
+
+
+
+// ENTRY POINT
 
 module.exports = function(grunt) {
 
@@ -64,7 +89,7 @@ module.exports = function(grunt) {
                     return false;
                 } 
                 else {
-                    return true;
+                    return grunt.file.isFile(filepath);
                 }
             }).
                 
@@ -76,7 +101,6 @@ module.exports = function(grunt) {
             }).
                 
                 join(',') + makeLayerFooter();
-
 
 
             grunt.file.write(f.dest, layerContent);

@@ -102,3 +102,5 @@ Please note that this task does not minify the resulting layers. You may want to
 _0.1.0 : first release, no automated tests yet_
 
 _0.1.1 : stronger package name solver_
+
+_0.1.2 : can include resources : css, html etc..._
